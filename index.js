@@ -12,8 +12,8 @@ class Task {
     this.id = id;
     this.description = description;
     this.status = "in-progress";
-    this.createdAt = format(new Date(), "yyyy-MM-dd");
-    this.updatedAt = format(new Date(), "yyyy-MM-dd");
+    this.createdAt = format(new Date(), "dd-MMM-yyyy h:mm:ss");
+    this.updatedAt = format(new Date(), "dd-MMM-yyyy h:mm:ss");
   }
 }
 
@@ -29,6 +29,10 @@ switch (command) {
     let statusArg = process.argv[3];
     listTasks(statusArg);
     break;
+  case "update":
+    let newDesc = process.argv[4];
+    updateTask(process.argv[3], newDesc);
+    break;
   case "delete":
     deleteTask(process.argv[3]);
     break;
@@ -37,6 +41,9 @@ switch (command) {
     break;
   case "mark-done":
     markTask(process.argv[3], "done");
+    break;
+  default:
+    console.log("Unknown command, aborting program");
     break;
 }
 
@@ -49,10 +56,12 @@ async function readJsonFile() {
     tasks = data ? JSON.parse(data) : [];
     return tasks;
   } catch (error) {
-    if (error.code !== "ENOENT") {
-      console.error("Error reading file:", error);
-      return;
+    if (error.code === "ENOENT") {
+      await fs.writeFile("tasks.json", JSON.stringify(tasks, null, 2));
+      console.log("Missing tasks.json file, creating new file");
+      return tasks;
     }
+    throw error;
   }
 }
 
@@ -71,7 +80,7 @@ async function addTask(taskDesc) {
   const newTask = new Task(Date.now(), taskDesc);
   tasks.push(newTask);
 
-  writeJsonFile(tasks, `Task added successfully (ID: ${newTask.id}}`);
+  await writeJsonFile(tasks, `Task added successfully (ID: ${newTask.id}}`);
 }
 
 async function listTasks(status) {
@@ -88,6 +97,14 @@ async function listTasks(status) {
   }
 }
 
+async function updateTask(index, desc) {
+  let tasks = await readJsonFile();
+
+  tasks[index].description = desc;
+  tasks[index].updatedAt = format(new Date(), "dd-MMM-yyyy h:mm:ss");
+  await writeJsonFile(tasks, `Updated description for task ${index}`);
+}
+
 async function deleteTask(index) {
   let tasks = await readJsonFile();
 
@@ -95,7 +112,7 @@ async function deleteTask(index) {
     return task !== tasks[index];
   });
 
-  writeJsonFile(newTasks, `Successfully deleted task at index ${index}`);
+  await writeJsonFile(newTasks, `Successfully deleted task at index ${index}`);
 }
 
 async function markTask(index, status) {
@@ -104,6 +121,7 @@ async function markTask(index, status) {
   try {
     if (status === "done" || status === "in-progress") {
       tasks[index].status = status;
+      tasks[index].updatedAt = format(new Date(), "dd-MMM-yyyy h:mm:ss");
       writeJsonFile(tasks, `Updated task at index ${index} to ${status}`);
     }
   } catch (error) {
