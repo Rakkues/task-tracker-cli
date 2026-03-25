@@ -69,6 +69,7 @@ async function writeJsonFile(tasks, msg) {
   try {
     await fs.writeFile("tasks.json", JSON.stringify(tasks, null, 2));
     console.log(msg);
+    console.table(tasks);
   } catch (error) {
     console.error("Error writing file: ", error);
   }
