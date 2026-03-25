@@ -9,9 +9,9 @@
   {
     "id": 1774456678393,
     "description": "wash the car",
-    "status": "in-progress",
+    "status": "done",
     "createdAt": "26-Mar-2026 12:37:58",
-    "updatedAt": "26-Mar-2026 12:37:58"
+    "updatedAt": "26-Mar-2026 12:40:09"
   },
   {
     "id": 1774456695271,
@@ -19,5 +19,12 @@
     "status": "in-progress",
     "createdAt": "26-Mar-2026 12:38:15",
     "updatedAt": "26-Mar-2026 12:38:15"
+  },
+  {
+    "id": 1774456888844,
+    "description": "todo task",
+    "status": "todo",
+    "createdAt": "26-Mar-2026 12:41:28",
+    "updatedAt": "26-Mar-2026 12:41:28"
   }
 ]

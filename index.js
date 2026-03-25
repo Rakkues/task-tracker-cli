@@ -11,7 +11,7 @@ class Task {
   constructor(id, description) {
     this.id = id;
     this.description = description;
-    this.status = "in-progress";
+    this.status = "todo";
     this.createdAt = format(new Date(), "dd-MMM-yyyy h:mm:ss");
     this.updatedAt = format(new Date(), "dd-MMM-yyyy h:mm:ss");
   }
