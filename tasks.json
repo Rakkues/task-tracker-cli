@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "description": "Bring water",
+    "status": "in-progress",
+    "createdAt": 1774424086632,
+    "updatedAt": 1774424086632
+  },
+  {
+    "id": 2,
+    "description": "Bring water",
+    "status": "done",
+    "createdAt": 1774424576283,
+    "updatedAt": 1774424576283
+  },
+  {
+    "id": 3,
+    "description": "Shoot dudes",
+    "status": "in-progress",
+    "createdAt": 1774424592682,
+    "updatedAt": 1774424592682
+  },
+  {
+    "id": 4,
+    "description": "Date test",
+    "status": "in-progress",
+    "createdAt": "2026-03-25",
+    "updatedAt": "2026-03-25"
+  }
+]
