@@ -34,20 +34,25 @@ switch (command) {
 }
 
 // Functions
-async function addTask(taskDesc) {
+async function readJsonFile() {
   let tasks = [];
 
   try {
     const data = await fs.readFile("tasks.json", "utf-8");
     tasks = data ? JSON.parse(data) : [];
+    return tasks;
   } catch (error) {
     if (error.code !== "ENOENT") {
       console.error("Error reading file:", error);
       return;
     }
   }
+}
 
-  const newTask = new Task(tasks.length + 1, taskDesc);
+async function addTask(taskDesc) {
+  let tasks = await readJsonFile();
+
+  const newTask = new Task(Date.now(), taskDesc);
   tasks.push(newTask);
 
   try {
@@ -59,17 +64,7 @@ async function addTask(taskDesc) {
 }
 
 async function listTasks(status) {
-  let tasks = [];
-
-  try {
-    const data = await fs.readFile("tasks.json", "utf-8");
-    tasks = data ? JSON.parse(data) : [];
-  } catch (error) {
-    if (error.code !== "ENOENT") {
-      console.error("Error reading file:", error);
-      return;
-    }
-  }
+  let tasks = await readJsonFile();
 
   if (!status) {
     console.table(tasks);
@@ -82,28 +77,16 @@ async function listTasks(status) {
   }
 }
 
-async function deleteTask(id) {
-  let tasks = [];
+async function deleteTask(index) {
+  let tasks = await readJsonFile();
 
-  try {
-    const data = await fs.readFile("tasks.json", "utf-8");
-    tasks = data ? JSON.parse(data) : [];
-  } catch (error) {
-    if (error.code !== "ENOENT") {
-      console.error("Error reading file:", error);
-      return;
-    }
-  }
-
-  let newTasks = tasks.filter((tasks) => {
-    return tasks.id !== parseInt(id);
+  let newTasks = tasks.filter((task) => {
+    return task !== tasks[index];
   });
-
-  console.log(newTasks);
 
   try {
     await fs.writeFile("tasks.json", JSON.stringify(newTasks, null, 2));
-    console.log(`Successfully deleted task (ID: ${id}}`);
+    console.log(`Successfully deleted task at index ${index}`);
   } catch (error) {
     console.error("Error writing file: ", error);
   }
