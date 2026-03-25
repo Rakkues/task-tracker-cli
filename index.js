@@ -1,6 +1,5 @@
 import * as fs from "fs/promises";
 import { format } from "date-fns";
-import { write } from "fs";
 
 class Task {
   id;
@@ -32,6 +31,13 @@ switch (command) {
     break;
   case "delete":
     deleteTask(process.argv[3]);
+    break;
+  case "mark-in-progress":
+    markTask(process.argv[3], "in-progress");
+    break;
+  case "mark-done":
+    markTask(process.argv[3], "done");
+    break;
 }
 
 // Functions
@@ -93,9 +99,14 @@ async function deleteTask(index) {
 }
 
 async function markTask(index, status) {
-  let tasks = readJsonFile();
+  let tasks = await readJsonFile();
 
-  if (status === "done" || status === "in-progress") {
-    tasks[index].status = status;
+  try {
+    if (status === "done" || status === "in-progress") {
+      tasks[index].status = status;
+      writeJsonFile(tasks, `Updated task at index ${index} to ${status}`);
+    }
+  } catch (error) {
+    console.error("Error updating task: ", error);
   }
 }
