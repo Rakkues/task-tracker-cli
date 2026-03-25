@@ -1,5 +1,6 @@
 import * as fs from "fs/promises";
 import { format } from "date-fns";
+import { write } from "fs";
 
 class Task {
   id;
@@ -49,18 +50,22 @@ async function readJsonFile() {
   }
 }
 
+async function writeJsonFile(tasks, msg) {
+  try {
+    await fs.writeFile("tasks.json", JSON.stringify(tasks, null, 2));
+    console.log(msg);
+  } catch (error) {
+    console.error("Error writing file: ", error);
+  }
+}
+
 async function addTask(taskDesc) {
   let tasks = await readJsonFile();
 
   const newTask = new Task(Date.now(), taskDesc);
   tasks.push(newTask);
 
-  try {
-    await fs.writeFile("tasks.json", JSON.stringify(tasks, null, 2));
-    console.log(`Task added successfully (ID: ${newTask.id}}`);
-  } catch (error) {
-    console.error("Error writing file: ", error);
-  }
+  writeJsonFile(tasks, `Task added successfully (ID: ${newTask.id}}`);
 }
 
 async function listTasks(status) {
@@ -84,10 +89,13 @@ async function deleteTask(index) {
     return task !== tasks[index];
   });
 
-  try {
-    await fs.writeFile("tasks.json", JSON.stringify(newTasks, null, 2));
-    console.log(`Successfully deleted task at index ${index}`);
-  } catch (error) {
-    console.error("Error writing file: ", error);
+  writeJsonFile(newTasks, `Successfully deleted task at index ${index}`);
+}
+
+async function markTask(index, status) {
+  let tasks = readJsonFile();
+
+  if (status === "done" || status === "in-progress") {
+    tasks[index].status = status;
   }
 }
