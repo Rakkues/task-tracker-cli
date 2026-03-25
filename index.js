@@ -29,6 +29,8 @@ switch (command) {
     let statusArg = process.argv[3];
     listTasks(statusArg);
     break;
+  case "delete":
+    deleteTask(process.argv[3]);
 }
 
 // Functions
@@ -58,7 +60,6 @@ async function addTask(taskDesc) {
 
 async function listTasks(status) {
   let tasks = [];
-  console.log(status);
 
   try {
     const data = await fs.readFile("tasks.json", "utf-8");
@@ -78,5 +79,32 @@ async function listTasks(status) {
     });
 
     console.table(filteredTasks);
+  }
+}
+
+async function deleteTask(id) {
+  let tasks = [];
+
+  try {
+    const data = await fs.readFile("tasks.json", "utf-8");
+    tasks = data ? JSON.parse(data) : [];
+  } catch (error) {
+    if (error.code !== "ENOENT") {
+      console.error("Error reading file:", error);
+      return;
+    }
+  }
+
+  let newTasks = tasks.filter((tasks) => {
+    return tasks.id !== parseInt(id);
+  });
+
+  console.log(newTasks);
+
+  try {
+    await fs.writeFile("tasks.json", JSON.stringify(newTasks, null, 2));
+    console.log(`Successfully deleted task (ID: ${id}}`);
+  } catch (error) {
+    console.error("Error writing file: ", error);
   }
 }
